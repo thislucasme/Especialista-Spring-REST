@@ -1,14 +1,7 @@
 package com.thislucasme.domain.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-import com.thislucasme.domain.model.Cidade;
 import com.thislucasme.domain.model.Estado;
-public interface EstadoRepository {
-
-	List<Estado> todos();
-	Estado porId(Long id);
-	Estado adcionar(Estado estado);
-	void remover(Estado estado);
+public interface EstadoRepository extends JpaRepository<Estado, Long>{
 	
 }

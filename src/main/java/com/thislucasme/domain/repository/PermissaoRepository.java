@@ -1,14 +1,7 @@
 package com.thislucasme.domain.repository;
-
-import java.util.List;
-import com.thislucasme.domain.model.FormaPagamaento;
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.thislucasme.domain.model.Permissao;
 
-public interface PermissaoRepository {
-	
-	List<Permissao> todos();
-	Permissao porId(Long id);
-	Permissao adcionar(Permissao permissao);
-	void remover(Permissao permissao);
+public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
 	
 }

@@ -1,6 +1,7 @@
 package com.thislucasme.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +35,14 @@ public class EstadoController {
 	
 	@GetMapping
 	public List<Estado> listar(){
-		return repositoryEstado.todos();
+		return repositoryEstado.findAll();
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Estado> buscar(@PathVariable Long id) {
-		Estado estado = repositoryEstado.porId(id);
+		Optional<Estado> estado = repositoryEstado.findById(id);
 		if(estado != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(estado);
+			return ResponseEntity.status(HttpStatus.OK).body(estado.get());
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}

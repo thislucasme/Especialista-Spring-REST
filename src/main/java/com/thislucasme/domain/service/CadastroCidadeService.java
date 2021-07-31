@@ -1,5 +1,7 @@
 package com.thislucasme.domain.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,35 +24,36 @@ public class CadastroCidadeService {
 	private EstadoRepository estadoRepository;
 	
 	public Cidade buscar(Long id) {
-		Cidade cidade = cidadeRepository.porId(id);
+		Optional<Cidade> cidade = cidadeRepository.findById(id);
 		
-		if(cidade == null) {
+		if(!cidade.isPresent()) {
 			throw new EntidadeNaoEncontradaException(String.format("Cidade com id %d nao pode ser encontrado", id));
 		}
-		return cidade;
+		return cidade.get();
 	}
 	public Cidade salvar(Cidade cidade) {
-		return cidadeRepository.adcionar(cidade);
+		return cidadeRepository.save(cidade);
 	}
 	public Cidade atualizar(Cidade cidade) {
-		Estado estado = estadoRepository.porId(cidade.getEstado().getId());
-		Cidade cidadeAtual = cidadeRepository.porId(cidade.getId());
-		if(cidadeAtual == null) {
+		Optional<Estado> estado = estadoRepository.findById(cidade.getEstado().getId());
+		Optional<Cidade> cidadeAtual = cidadeRepository.findById(cidade.getId());
+		
+		if(!cidadeAtual.isPresent()) {
 			throw new EntidadeNaoEncontradaException(String.format("Cidade com id %d nao existe", cidade.getId()));
-		}else if(estado == null) {
+		}else if(!estado.isPresent()) {
 			throw new EntidadeNaoEncontradaException(String.format("Estado com id %d nao existe", cidade.getEstado().getId()));
 		}
-		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-		return cidadeRepository.adcionar(cidadeAtual);
+		BeanUtils.copyProperties(cidade, cidadeAtual.get(), "id");
+		return cidadeRepository.save(cidadeAtual.get());
 	}
 	
 	public void delete(Long id) {
-		Cidade cidade =  cidadeRepository.porId(id);
-		if(cidade == null) {
+		Optional<Cidade> cidade =  cidadeRepository.findById(id);
+		if(!cidade.isPresent()) {
 			throw new EntidadeNaoEncontradaException(String.format("Cidade com id %d nao existe", id));
 		}
 		try {
-			cidadeRepository.remover(cidade);
+			cidadeRepository.delete(cidade.get());
 		}catch(DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format("Cozinha com id %d nao pode ser deletada, pois está em uso", id));
 		}

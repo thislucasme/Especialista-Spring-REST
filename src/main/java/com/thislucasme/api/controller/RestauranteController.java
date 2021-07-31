@@ -4,6 +4,7 @@ import java.beans.Beans;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,15 @@ public class RestauranteController {
 
 	@GetMapping
 	public List<Restaurante> listar() {
-		return restauranteRepository.todos();
+		return restauranteRepository.findAll();
 	}
 
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
-		Restaurante restaurante = restauranteRepository.porId(id);
+		Optional<Restaurante> restaurante = restauranteRepository.findById(id);
 
-		if (restaurante != null) {
-			return ResponseEntity.ok().body(restaurante);
+		if (restaurante.isPresent()) {
+			return ResponseEntity.ok().body(restaurante.get());
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -88,17 +89,17 @@ public class RestauranteController {
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long id,
 			@RequestBody Map<String, Object> campos){
 		
-		Restaurante restauranteAtual = restauranteRepository.porId(id);
+		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(id);
 		
-		if(restauranteAtual == null) {
+		if(!restauranteAtual.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
 		
-		merge(campos, restauranteAtual);
+		merge(campos, restauranteAtual.get());
  
 		
-		return atualizar(id, restauranteAtual);
+		return atualizar(id, restauranteAtual.get());
 	}
 
 	private void merge(Map<String, Object> campos, Restaurante restaurante) {

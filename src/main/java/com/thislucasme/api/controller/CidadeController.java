@@ -33,7 +33,7 @@ public class CidadeController {
 	
 	@GetMapping
 	public ResponseEntity<List<Cidade>> listar(){
-		List<Cidade> cidades = cidadeRepository.todos();
+		List<Cidade> cidades = cidadeRepository.findAll();
 		
 		if(cidades.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -55,7 +55,7 @@ public class CidadeController {
 	
 	@PostMapping
 	public Cidade salvar(@RequestBody Cidade cidade){
-		return cidadeRepository.adcionar(cidade);
+		return cidadeRepository.save(cidade);
 	}
 	
 	@PutMapping("/{id}")

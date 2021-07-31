@@ -1,5 +1,7 @@
 package com.thislucasme.domain.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,26 +20,26 @@ public class CadastroEstadoService {
 	private EstadoRepository estadoRepository;
 	
 	public Estado adcionar(Estado estado) {
-		return estadoRepository.adcionar(estado);
+		return estadoRepository.save(estado);
 	}
 	public Estado atualizar(Estado estado) {
-		Estado estadoAtual = estadoRepository.porId(estado.getId());
+		Optional<Estado> estadoAtual = estadoRepository.findById(estado.getId());
 		
-		if(estadoAtual == null) {
+		if(!estadoAtual.isPresent()) {
 			throw new EntidadeNaoEncontradaException(String.format("Estado com id %d nao existe", estado.getId()));
 		}
-		BeanUtils.copyProperties(estado, estadoAtual);
+		BeanUtils.copyProperties(estado, estadoAtual.get());
 		
-		return estadoRepository.adcionar(estadoAtual);
+		return estadoRepository.save(estadoAtual.get());
 	}
 	
 	public void delete(Long id) {
-		Estado estado = estadoRepository.porId(id);
+		Optional<Estado> estado = estadoRepository.findById(id);
 		try {
-			if(estado == null) {
+			if(!estado.isPresent()) {
 				throw new EntidadeNaoEncontradaException(String.format("Estado com id %d nao existe", id));
 			}
-			estadoRepository.remover(estado);
+			estadoRepository.delete(estado.get());
 			
 		}catch(DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format("Estado com id %d nao pode ser deletado pois está em uso", id));
