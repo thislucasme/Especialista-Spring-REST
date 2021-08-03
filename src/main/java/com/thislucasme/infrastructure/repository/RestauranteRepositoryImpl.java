@@ -71,7 +71,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 		
 		Root<Restaurante> root = criteria.from(Restaurante.class);
 		
-		var predicates = new ArrayList<Predicate>();
+		List<Predicate> predicates = new ArrayList<>();
 		
 		if(StringUtils.hasText(nome)) {
 			predicates.add(builder.like(root.get("nome"), "%" + nome + "%"));
