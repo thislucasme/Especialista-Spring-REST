@@ -75,9 +75,15 @@ public class RestauranteController {
 		restaurante.setId(id);
 		
 		try {
+			Restaurante restauranteAtual = restauranteRepository.findById(id).orElse(null);
 			
-			restaurante = cadastroRestauranteService.atualizar(restaurante);
-			return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+			if(restauranteAtual != null) {
+				BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formaPagamento", "endereco");
+		
+				restaurante = cadastroRestauranteService.atualizar(restauranteAtual);
+				return ResponseEntity.status(HttpStatus.OK).body(restauranteAtual);
+			}
+			return ResponseEntity.notFound().build();
 			
 		} catch (EntidadeNaoEncontradaException e) {
 			
