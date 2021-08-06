@@ -1,4 +1,4 @@
-package com.thislucasme.domain.model;	
+ package com.thislucasme.domain.model;	
 import java.util.ArrayList;
 import java.util.List;
 
